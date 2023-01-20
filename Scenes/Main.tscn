@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=2]
+[gd_scene load_steps=6 format=2]
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Fonts/PixelOperatorMono8.ttf" type="DynamicFontData" id=2]
@@ -10,7 +10,9 @@ font_data = ExtResource( 2 )
 [sub_resource type="Theme" id=5]
 default_font = SubResource( 4 )
 
-[node name="Main" type="Control"]
+[sub_resource type="Theme" id=6]
+
+[node name="MainScreen" type="Control"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme = SubResource( 5 )
@@ -24,14 +26,28 @@ margin_right = 180.0
 margin_bottom = 320.0
 color = Color( 0, 0, 0, 1 )
 
-[node name="Coins" type="Label" parent="."]
+[node name="MainScrollContainer" type="ScrollContainer" parent="."]
 margin_right = 180.0
-margin_bottom = 14.0
+margin_bottom = 320.0
+theme = SubResource( 6 )
+
+[node name="MainVBoxContainer" type="VBoxContainer" parent="MainScrollContainer"]
+margin_right = 176.0
+margin_bottom = 24.0
+
+[node name="Coins" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
+margin_right = 176.0
+margin_bottom = 8.0
 align = 1
 valign = 1
 
-[node name="Divisory01" type="Label" parent="."]
-margin_top = 14.0
-margin_right = 180.0
-margin_bottom = 22.0
+[node name="Divisory01" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
+margin_top = 12.0
+margin_right = 176.0
+margin_bottom = 20.0
 text = "----------------------"
+
+[node name="TableMarket" type="VBoxContainer" parent="MainScrollContainer/MainVBoxContainer"]
+margin_top = 24.0
+margin_right = 176.0
+margin_bottom = 24.0
