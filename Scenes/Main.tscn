@@ -33,7 +33,7 @@ theme = SubResource( 6 )
 
 [node name="MainVBoxContainer" type="VBoxContainer" parent="MainScrollContainer"]
 margin_right = 176.0
-margin_bottom = 24.0
+margin_bottom = 20.0
 
 [node name="Coins" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
 margin_right = 176.0
@@ -46,8 +46,3 @@ margin_top = 12.0
 margin_right = 176.0
 margin_bottom = 20.0
 text = "----------------------"
-
-[node name="TableMarket" type="VBoxContainer" parent="MainScrollContainer/MainVBoxContainer"]
-margin_top = 24.0
-margin_right = 176.0
-margin_bottom = 24.0

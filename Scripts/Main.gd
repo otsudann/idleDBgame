@@ -12,10 +12,10 @@ var timeSave = 0
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	saveLoad.loadGame()
-	print(saveLoad.game_data.coins[0])
 	coins.current_value = float(saveLoad.game_data.coins[0])
+	
 	get_node("MainScrollContainer/MainVBoxContainer/Coins").text = str("%.2f" % coins.show()) + " C"
-	pass # Replace with function body.
+
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

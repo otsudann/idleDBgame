@@ -1,19 +1,16 @@
 extends Node
 
-const coin = preload("res://Scripts/Coin.gd")
-onready var coins = coin.new()
-
-## Tables and Values
+## Individual Tables
 # {<name>: [<quantity>, <buy_price>, <sell_price>], <enabled>}
-var market = {"chocoCoins": [0, 0.1, 0.03, false], "beans": [0, 5, 5.05, false]}
-var clothes = {"shirt": [0, 0.1, 0.03, false], "jeans": [0, 5, 5.05, false]}
+var market = {"chocoCoins": [0, 0.1, 0.03, true], "beans": [0, 5, 1.0, false]}
+var clothes = {"shirt": [0, 0.1, 0.03, false], "jeans": [0, 5, 1.0, false]}
 
-## All elements
+## Group Tables
 # <Name>: [<dict>, <enabled>]
-var elements = {"Market":[market, false], "Clothes":[clothes, false]}
+var group = {"Market":[market, true], "Clothes":[clothes, false]}
 
-# Ex: upd_val(elements['Market'])
-func update_values(element, name):
-	element[name][0] += 1
-	element[name][1] *= 0.05
-	coins.coin_add += element[name][2]
+# Ex: upd_val(group['Market'])
+func update_values(group, coins):
+	group[0] += 1
+	group[1] *= 0.1
+	coins.coin_add += group[2]
