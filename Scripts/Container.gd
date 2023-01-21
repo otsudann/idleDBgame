@@ -8,13 +8,17 @@ extends VBoxContainer
 func build_container(group, parent):
   for g in group:
     if group[g][0]:
-      #print(g)
+      var div = Label.new()
+      div.name = "Divisory01"
+      div.text = "----------------------"
+      parent.add_child(div)
       #build group container
       var c = GridContainer.new()
       c.set_columns(4)
       c.name = g
       c.set_size(Vector2(180,0))
       parent.add_child(c)
+
       var l0 = Label.new()
       var l1 = Label.new()
       var l2 = Label.new()

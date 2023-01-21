@@ -2,7 +2,7 @@ extends Node
 
 ## Individual Tables
 # {<name>: [<enabled>, <quantity>, <sell_price>, <buy_price>]}
-var market = {"chocoCoins": [true, 0, 0.03, 0.1], "beans": [false, 0, 1.0, 5]}
+var market = {"apples": [true, 0, 0.03, 0.1], "beans": [false, 0, 1.0, 5]}
 var clothes = {"shirt": [false, 0, 0.03, 0.1], "jeans": [false, 0, 1.0, 5]}
 
 ## Group Tables
