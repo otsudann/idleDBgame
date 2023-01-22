@@ -1,15 +1,21 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Fonts/PixelOperatorMono8.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Assets/Fonts/Pixeled.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Scripts/Container.gd" type="Script" id=3]
 
 [sub_resource type="DynamicFont" id=4]
-size = 12
+size = 10
 font_data = ExtResource( 2 )
 
 [sub_resource type="Theme" id=5]
 default_font = SubResource( 4 )
+
+[sub_resource type="RectangleShape2D" id=6]
+extents = Vector2( 155, 7 )
+
+[sub_resource type="RectangleShape2D" id=7]
+extents = Vector2( 50, 20 )
 
 [node name="MainScreen" type="Control"]
 anchor_right = 1.0
@@ -17,6 +23,7 @@ anchor_bottom = 1.0
 theme = SubResource( 5 )
 script = ExtResource( 1 )
 __meta__ = {
+"_edit_group_": true,
 "_edit_lock_": true
 }
 
@@ -24,9 +31,6 @@ __meta__ = {
 margin_right = 360.0
 margin_bottom = 640.0
 color = Color( 0, 0, 0, 1 )
-__meta__ = {
-"_edit_lock_": true
-}
 
 [node name="MainScrollContainer" type="ScrollContainer" parent="."]
 anchor_left = 0.5
@@ -34,20 +38,76 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 margin_left = -160.0
-margin_top = -310.0
+margin_top = -276.0
 margin_right = 160.0
 margin_bottom = 310.0
 scroll_horizontal_enabled = false
-__meta__ = {
-"_edit_group_": true,
-"_edit_lock_": true
-}
 
 [node name="MainVBoxContainer" type="VBoxContainer" parent="MainScrollContainer"]
-margin_bottom = 13.0
+margin_right = 320.0
+margin_bottom = 123.0
+size_flags_horizontal = 3
 script = ExtResource( 3 )
 
 [node name="Coins" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
-margin_bottom = 13.0
+margin_right = 320.0
+margin_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
 align = 1
 valign = 1
+
+[node name="AddCoin" type="TouchScreenButton" parent="MainScrollContainer/MainVBoxContainer/Coins"]
+shape = SubResource( 6 )
+
+[node name="Divisory00" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
+margin_top = 32.0
+margin_right = 320.0
+margin_bottom = 60.0
+text = "---------------------------------------"
+
+[node name="CoinUpgrade" type="GridContainer" parent="MainScrollContainer/MainVBoxContainer"]
+margin_top = 64.0
+margin_right = 320.0
+margin_bottom = 123.0
+size_flags_horizontal = 3
+size_flags_vertical = 0
+columns = 3
+
+[node name="ClickUpg" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
+margin_right = 104.0
+margin_bottom = 59.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+text = "C upg
+"
+valign = 1
+
+[node name="BuyPrice" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
+margin_left = 108.0
+margin_right = 212.0
+margin_bottom = 28.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+align = 1
+valign = 1
+
+[node name="UpgBtn" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
+margin_left = 216.0
+margin_right = 320.0
+margin_bottom = 28.0
+size_flags_horizontal = 3
+size_flags_vertical = 2
+text = "+"
+align = 1
+valign = 1
+
+[node name="TouchUpgCoin" type="TouchScreenButton" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade/UpgBtn"]
+shape = SubResource( 7 )
+
+[connection signal="pressed" from="MainScrollContainer/MainVBoxContainer/Coins/AddCoin" to="." method="_on_AddCoin_pressed"]
+[connection signal="pressed" from="MainScrollContainer/MainVBoxContainer/CoinUpgrade/UpgBtn/TouchUpgCoin" to="." method="_on_TouchUpgCoin_pressed"]
