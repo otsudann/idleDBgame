@@ -34,8 +34,8 @@ func _ready():
   
   # build containers
   containers.build_container(elements.group, parent)
-  
-  elements.calc_values(elements.group, true)
+
+  elements.fill_dicts(true)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

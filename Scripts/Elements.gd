@@ -1,54 +1,51 @@
 extends Node
 
-var next_fctr = 1.15
-var sell_fctr = 1.6
-var buy_fctr = 1.8
-var base_fixed_qtt = 15
-var base_qtt = 15
+# Quantity / Sell / Buy
+var base_fixed_attr = {"quantity": 15, "sell": 0.03, "buy": 0.25}
+var base_dynamic_attr = {"quantity": 15, "sell": 0.03, "buy": 0.25}
+var multiplier_factor = {"quantity": 1.15, "sell": 1.6, "buy": 1.8}
 
+## Names
+var all_elements_list = {
+  "fruit":  ["apple", "apric", "avoca", "banan", "berry", "cherr", "cocon", "drago", "duria", "grape"],
+  "veggi":  ["aspar", "bambo", "beetr", "brocc", "cabba", "carro", "cauli", "celer", "corns", "eggpl"],
+}
 
 ## Individual Tables
 # {<name>: [<enabled>, <quantity>, <sell_price>, <buy_price>]}
-var fruits = {"apple": [true, 0, 0.03, 0.25],
-              "apric": [false, 0, 0, 0],
-              "avoca": [false, 0, 0, 0],
-              "banan": [false, 0, 0, 0],
-              "berry": [false, 0, 0, 0],
-              
-              }
-var veggies = {"aspar": [false, 0, 0, 0],
-              "bambo": [false, 0, 0, 0],
-                
-              }
+var fruits_dict = {}
+var veggies_dict = {}
 
 ## Group Tables
 # <Name>: [<dict>, <enabled>]
-var group = {"Fruit":[true, fruits],
-            "Veggi":[false, veggies],
-            
-            }
+var group = {
+  "fruit": [true, fruits_dict],
+  "veggi": [false, veggies_dict],
+ }
 
 # Ex: upd_val(group['Market'])
 func buy(element, coins, container):
   # Test if can buy
-  if coins.buy(element[3]):
+  if coins.buy(element["buy"]):
     # Increase Quantity
-    element[1] += 1
+    element["quantity"] += 1
     # Increase Buy Price
-    element[3] *= 0.1
+    element["buy"] *= 0.1
     # Update coin per second value
-    coins.coin_add += element[2]
+    coins.coin_add += element["sell"]
     
-    # If reach min buy, enable the next
-    if element[1] >= base_qtt:
-      base_qtt *= next_fctr
-      container.queue_free()
-      container.build_container()
-  
-func calc_values(element, checked):
-  #this is a one time function to setup base sell/buy values
-  for el in element:
-    var subelements = element[el][1]
-    for sub in subelements:
-      print(sub)
-    
+    # Must check if reach min quantity, enable the next
+
+#this is a one time function to setup base sell/buy values 
+func fill_dicts(check):
+  if check:
+   for all in all_elements_list:
+    for sub in all_elements_list[all]:
+      group[all][1][sub] = {"min_qtt": base_dynamic_attr["quantity"], "quantity": 0, "sell": base_dynamic_attr["sell"], "buy": base_dynamic_attr["buy"]}
+      base_dynamic_attr["quantity"] = stepify(base_dynamic_attr["quantity"]*multiplier_factor["quantity"], 0.01)
+      base_dynamic_attr["buy"] = stepify(base_dynamic_attr["buy"]*multiplier_factor["buy"], 0.01)
+      base_dynamic_attr["sell"] = stepify(base_dynamic_attr["sell"]*multiplier_factor["sell"], 0.01)
+  else:
+    pass
+  for l in group:
+    print(group[l])
