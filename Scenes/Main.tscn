@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Fonts/Aquarius-Regular.ttf" type="DynamicFontData" id=2]
-[ext_resource path="res://Scripts/Container.gd" type="Script" id=3]
+[ext_resource path="res://Scripts/Elements.gd" type="Script" id=3]
 
 [sub_resource type="DynamicFont" id=4]
 size = 10
@@ -15,7 +15,7 @@ default_font = SubResource( 4 )
 extents = Vector2( 155, 7 )
 
 [sub_resource type="RectangleShape2D" id=7]
-extents = Vector2( 50, 20 )
+extents = Vector2( 50, 7 )
 
 [node name="MainScreen" type="Control"]
 anchor_right = 1.0
