@@ -22,6 +22,7 @@ var timeSave = 0
 func _ready():
   parent = get_node(parent_path).get_node("MainScrollContainer/MainVBoxContainer")
   buyPriceLabel = get_node(parent_path).get_node("MainScrollContainer/MainVBoxContainer/CoinUpgrade/BuyPrice")
+  elements.fill_dicts(true)
   
   # Load data
   saveLoad.loadGame()
@@ -35,7 +36,6 @@ func _ready():
   # build containers
   containers.build_container(elements.group, parent)
 
-  elements.fill_dicts(true)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):

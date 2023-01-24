@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=2]
 
 [ext_resource path="res://Scripts/Main.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Fonts/Pixeled.ttf" type="DynamicFontData" id=2]
+[ext_resource path="res://Assets/Fonts/Aquarius-Regular.ttf" type="DynamicFontData" id=2]
 [ext_resource path="res://Scripts/Container.gd" type="Script" id=3]
 
 [sub_resource type="DynamicFont" id=4]
@@ -45,13 +45,13 @@ scroll_horizontal_enabled = false
 
 [node name="MainVBoxContainer" type="VBoxContainer" parent="MainScrollContainer"]
 margin_right = 320.0
-margin_bottom = 123.0
+margin_bottom = 53.0
 size_flags_horizontal = 3
 script = ExtResource( 3 )
 
 [node name="Coins" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
 margin_right = 320.0
-margin_bottom = 28.0
+margin_bottom = 15.0
 grow_horizontal = 2
 grow_vertical = 2
 align = 1
@@ -61,34 +61,33 @@ valign = 1
 shape = SubResource( 6 )
 
 [node name="Divisory00" type="Label" parent="MainScrollContainer/MainVBoxContainer"]
-margin_top = 32.0
+margin_top = 19.0
 margin_right = 320.0
-margin_bottom = 60.0
-text = "---------------------------------------"
+margin_bottom = 34.0
+text = "---------------------------------------------------------------"
 
 [node name="CoinUpgrade" type="GridContainer" parent="MainScrollContainer/MainVBoxContainer"]
-margin_top = 64.0
+margin_top = 38.0
 margin_right = 320.0
-margin_bottom = 123.0
+margin_bottom = 53.0
 size_flags_horizontal = 3
 size_flags_vertical = 0
 columns = 3
 
 [node name="ClickUpg" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
 margin_right = 104.0
-margin_bottom = 59.0
+margin_bottom = 15.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 0
-text = "C upg
-"
+text = "more coins"
 valign = 1
 
 [node name="BuyPrice" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
 margin_left = 108.0
 margin_right = 212.0
-margin_bottom = 28.0
+margin_bottom = 15.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
@@ -99,10 +98,10 @@ valign = 1
 [node name="UpgBtn" type="Label" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade"]
 margin_left = 216.0
 margin_right = 320.0
-margin_bottom = 28.0
+margin_bottom = 15.0
 size_flags_horizontal = 3
 size_flags_vertical = 2
-text = "+"
+text = "BUY"
 align = 1
 valign = 1
 

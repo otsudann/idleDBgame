@@ -12,7 +12,7 @@ func build_container(group, parent):
     if group[g][0]:
       var div = Label.new()
       div.name = "Divisory01"
-      div.text = "---------------------------------------"
+      div.text = "---------------------------------------------------------------"
       parent.add_child(div)
       
       #build group container
@@ -42,7 +42,7 @@ func build_container(group, parent):
       l1.text = "amo"
       l2.text = "sel"
       l3.text = "buy"
-      l4.text = ""
+      l4.text = "+1"
       
       # Equally cell width
       l0.size_flags_horizontal = 2
@@ -58,9 +58,8 @@ func build_container(group, parent):
       c.add_child(l4)
       
       var subgroup = group[g][1]
-      
       for el in subgroup:
-        if subgroup[el][0]:
+        if subgroup[el]["qtt"] >= subgroup[el]["min_qtt"] or el == "apple":
           var el0 = Label.new()
           var el1 = Label.new()
           var el2 = Label.new()
@@ -68,24 +67,17 @@ func build_container(group, parent):
           var el4 = Label.new()
       
           el0.name = el
-          el1.name = el + "Amo"
+          el1.name = el + "Qtt"
           el2.name = el + "Sel"
           el3.name = el + "Buy"
           el4.name = el + "BuyBtn"
           
           el0.text = el
-          el1.text = str(subgroup[el][1])
-          el2.text = str(subgroup[el][2])
-          el3.text = str(subgroup[el][3])
-          el4.text = "+"
-          
-          var shapets = Shape2D.new()
-          
-          var ts4 = TouchScreenButton.new()
-          ts4.name = el + "BuyBtnTS"
-          ts4.action = "ui_accept"
-          el4.add_child(ts4)
-          
+          el1.text = str(subgroup[el]["qtt"])
+          el2.text = str(subgroup[el]["sell"])
+          el3.text = str(subgroup[el]["buy"])
+          el4.text = "BUY"
+              
           c.add_child(el0)
           c.add_child(el1)
           c.add_child(el2)
