@@ -3,27 +3,28 @@ extends VBoxContainer
 # Quantity / Sell / Buy
 var base_fixed_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
 var base_dynamic_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
-var multiplier_factor = {"qtt": 1.15, "sell": 1.6, "buy": 1.8}
+var multiplier_factor = {"qtt": 1.15, "sell": 1.3, "buy": 1.4}
 
 ## Names
 var all_elements_list = {
-  "fruit":  ["apple", "apric", "avoca", "banan", "berry", "cherr", "cocon", "drago", "duria", "grape"],
-  "veggi":  ["aspar", "bambo", "beetr", "brocc", "cabba", "carro", "cauli", "celer", "corns", "eggpl"],
+  "fruit":  ["apple", "apric", "avoca", "banan", "berry", "cherr", "cocon", "drago", "duria", "grape", ""],
+  "veggi":  ["aspar", "bambo", "beetr", "brocc", "cabba", "carro", "cauli", "celer", "corns", "eggpl", ""],
 }
-
+func _ready():
+  pass
+  
 ## Individual Tables
 # {<name>: [<enabled>, <quantity>, <sell_price>, <buy_price>]}
 var fruits_dict = {}
 var veggies_dict = {}
 
 ## Group Tables
-# <Name>: [<dict>, <enabled>]
+# <name>: [<enabled>, <dict>]
 var groups = {
   "fruit": [true, fruits_dict],
   "veggi": [false, veggies_dict],
  }
 
-# Ex: upd_val(group['Market'])
 func buy(element, coins):
   # Test if can buy
   if coins.buy(element["buy"]):
@@ -42,7 +43,7 @@ func fill_dicts(check):
    for all in all_elements_list:
     for sub in all_elements_list[all]:
       groups[all][1][sub] = {"min_qtt": base_dynamic_attr["min_qtt"], "qtt": 0, "sell": base_dynamic_attr["sell"], "buy": base_dynamic_attr["buy"]}
-      base_dynamic_attr["min_qtt"] = stepify(base_dynamic_attr["min_qtt"] * multiplier_factor["qtt"], 0.01)
+      base_dynamic_attr["min_qtt"] = stepify(base_dynamic_attr["min_qtt"] * multiplier_factor["qtt"], 1)
       base_dynamic_attr["buy"] = stepify(base_dynamic_attr["buy"] * multiplier_factor["buy"], 0.01)
       base_dynamic_attr["sell"] = stepify(base_dynamic_attr["sell"] * multiplier_factor["sell"], 0.01)
   else:
@@ -99,46 +100,49 @@ func build_container(group, parent, target):
       c.add_child(l4)
       
       #name_group, dict_group, container, target
-      build_subcontainer(g, group[g][1], c, target)
+      for el in group[g][1]:
+          if (group[g][1][el]["qtt"] >= groups[g][1][el]["min_qtt"] or el == "apple") and el != "" and c.get_node_or_null(el) == null:
+            build_subcontainer(el, g, target, c, group[g][1][el])
     else:
       break
 
 
-func build_subcontainer(g, subgroup, container, target):
+func build_subcontainer(element_name, group_name, target, container, items):
+  # element_name == "apple"
+  # group_name == "fruit"
+  # target == where the touch signal must act
+  var el = element_name
   var c = container
-  for el in subgroup:
-    if subgroup[el]["qtt"] >= subgroup[el]["min_qtt"] or el == "apple":
-      var el0 = Label.new()
-      var el1 = Label.new()
-      var el2 = Label.new()
-      var el3 = Label.new()
-      var el4 = Label.new()
   
-      el0.name = el
-      el1.name = el + "Qtt"
-      el2.name = el + "Sel"
-      el3.name = el + "Buy"
-      el4.name = el + "BuyBtn"
+  var el0 = Label.new()
+  var el1 = Label.new()
+  var el2 = Label.new()
+  var el3 = Label.new()
+  var el4 = Label.new()
+
+  el0.name = el
+  el1.name = el + "Qtt"
+  el2.name = el + "Sel"
+  el3.name = el + "Buy"
+  el4.name = el + "BuyBtn"
+  
+  el0.text = el
+  el1.text = str(items["qtt"])
+  el2.text = str(items["sell"])
+  el3.text = str(items["buy"])
+  el4.text = "BUY"
+  
+  var ts = TouchScreenButton.new()
+  ts.name = el
+  var rect_shape = RectangleShape2D.new()
+  rect_shape.set_extents(Vector2(25, 7))
+  ts.shape = rect_shape
+  ts.set_shape_centered(true)
+  ts.connect("released", target, "_on_Btn_click", [ group_name, el, all_elements_list[group_name] ])
+  el4.add_child(ts)
       
-      el0.text = el
-      el1.text = str(subgroup[el]["qtt"])
-      el2.text = str(subgroup[el]["sell"])
-      el3.text = str(subgroup[el]["buy"])
-      el4.text = "BUY"
-      
-      var ts = TouchScreenButton.new()
-      ts.name = el
-      var rect_shape = RectangleShape2D.new()
-      rect_shape.set_extents(Vector2(25, 7))
-      ts.shape = rect_shape
-      ts.set_shape_centered(true)
-      ts.connect("released", target, "_on_Btn_click", [ g, el])
-      el4.add_child(ts)
-          
-      c.add_child(el0)
-      c.add_child(el1)
-      c.add_child(el2)
-      c.add_child(el3)
-      c.add_child(el4)
-    else:
-      break
+  c.add_child(el0)
+  c.add_child(el1)
+  c.add_child(el2)
+  c.add_child(el3)
+  c.add_child(el4)

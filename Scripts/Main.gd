@@ -4,7 +4,6 @@ const c = preload("res://Scripts/Coin.gd")
 const svLd = preload("res://Scripts/SaveLoad.gd")
 const elem = preload("res://Scripts/Elements.gd")
 
-export var parent_path = NodePath(".")
 var parent
 var buyPriceLabel
 
@@ -18,8 +17,8 @@ var timeSave = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-  parent = get_node(parent_path).get_node("MainScrollContainer/MainVBoxContainer")
-  buyPriceLabel = get_node(parent_path).get_node("MainScrollContainer/MainVBoxContainer/CoinUpgrade/BuyPrice")
+  parent = get_node("MainScrollContainer/MainVBoxContainer")
+  buyPriceLabel = get_node("MainScrollContainer/MainVBoxContainer/CoinUpgrade/BuyPrice")
   elements.fill_dicts(true)
   
   # Load data
@@ -62,7 +61,7 @@ func _on_TouchUpgCoin_pressed():
     buyPriceLabel.text = "$" + str(stepify(coins.touch_coin_price, 0.01))
     parent.get_node("Coins").text = coins.show()
 
-func _on_Btn_click(group_name, element_name):
+func _on_Btn_click(group_name, element_name, elements_list):
   if coins.buy(elements.groups[group_name][1][element_name]["buy"]):
     elements.groups[group_name][1][element_name]["qtt"] += 1
     elements.groups[group_name][1][element_name]["buy"] = stepify(elements.groups[group_name][1][element_name]["buy"] * elements.multiplier_factor["sell"], 0.01)
@@ -72,6 +71,9 @@ func _on_Btn_click(group_name, element_name):
     parent.get_node(group_name+"/"+element_name+"Qtt").text = str(elements.groups[group_name][1][element_name]["qtt"])
     parent.get_node(group_name+"/"+element_name+"Buy").text = str(stepify(elements.groups[group_name][1][element_name]["buy"], 0.01))
     
-    #if elements.groups[group_name][1][element_name]["qtt"] >= elements.groups[group_name][1][element_name]["min_qtt"]:
-    if elements.groups[group_name][1][element_name]["qtt"] >= 3:
-      elements.build_subcontainer(group_name, elements.groups[group_name][1], parent.get_node(group_name), self)
+    var element_pos = elements_list.find(element_name, 0)
+    var next_el_check = elements.groups[group_name][1][element_name]["qtt"] >= elements.groups[group_name][1][element_name]["min_qtt"]
+    var next_element = elements_list[element_pos + 1]
+    
+    if (element_pos + 1 != 11) and next_el_check and parent.get_node_or_null(group_name+"/"+next_element) == null:
+      elements.build_subcontainer(next_element, group_name, self, parent.get_node(group_name), elements.groups[group_name][1][next_element])
