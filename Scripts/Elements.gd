@@ -1,148 +1,139 @@
 extends VBoxContainer
 
 # Quantity / Sell / Buy
-var base_fixed_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
-var base_dynamic_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
-var multiplier_factor = {"qtt": 1.15, "sell": 1.3, "buy": 1.4}
+var fixed_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
+var dyn_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
+var mult_factor = {"qtt": 1.15, "sell": 1.3, "buy": 1.4}
 
 ## Names
-var all_elements_list = {
-  "fruit":  ["apple", "apric", "avoca", "banan", "berry", "cherr", "cocon", "drago", "duria", "grape", ""],
-  "veggi":  ["aspar", "bambo", "beetr", "brocc", "cabba", "carro", "cauli", "celer", "corns", "eggpl", ""],
-}
-func _ready():
-  pass
-  
-## Individual Tables
-# {<name>: [<enabled>, <quantity>, <sell_price>, <buy_price>]}
-var fruits_dict = {}
-var veggies_dict = {}
-
-## Group Tables
-# <name>: [<enabled>, <dict>]
-var groups = {
-  "fruit": [true, fruits_dict],
-  "veggi": [false, veggies_dict],
+var itemsArray = [
+  ["apple", "apric", "avoca", "banan", "berry", "cherr", "cocon", "drago", "duria", "grape", ""],
+  ["aspar", "bambo", "beetr", "brocc", "cabba", "carro", "cauli", "celer", "corns", "eggpl", ""],
+]
+var categsArray = ["fruit", "veggi"]
+var fruitDict = {}
+var veggiDict = {}
+var categsItemsDict = {
+  "fruit": fruitDict,
+  "veggi": veggiDict,
  }
 
-func buy(element, coins):
-  # Test if can buy
-  if coins.buy(element["buy"]):
-    # Increase Quantity
-    element["qtt"] += 1
-    # Increase Buy Price
-    element["buy"] *= 0.1
-    # Update coin per second value
-    coins.coin_add += element["sell"]
-    
-    # Must check if reach min quantity, enable the next
+func _ready():
+  pass
+
+func load_saved_items():
+  pass
 
 #this is a one time function to setup base sell/buy values 
-func fill_dicts(check):
-  if check:
-   for all in all_elements_list:
-    for sub in all_elements_list[all]:
-      groups[all][1][sub] = {"min_qtt": base_dynamic_attr["min_qtt"], "qtt": 0, "sell": base_dynamic_attr["sell"], "buy": base_dynamic_attr["buy"]}
-      base_dynamic_attr["min_qtt"] = stepify(base_dynamic_attr["min_qtt"] * multiplier_factor["qtt"], 1)
-      base_dynamic_attr["buy"] = stepify(base_dynamic_attr["buy"] * multiplier_factor["buy"], 0.01)
-      base_dynamic_attr["sell"] = stepify(base_dynamic_attr["sell"] * multiplier_factor["sell"], 0.01)
-  else:
-    pass
+func fill_dicts(build=true):
+  if build:
+    for categ in categsArray:
+      for item in itemsArray:
+        categsItemsDict[categ][item] = {"min_qtt": dyn_attr["min_qtt"], "qtt": 0, "sell": dyn_attr["sell"], "buy": dyn_attr["buy"]}
+        dyn_attr["min_qtt"] = stepify(dyn_attr["min_qtt"] * mult_factor["qtt"], 1)
+        dyn_attr["buy"] = stepify(dyn_attr["buy"] * mult_factor["buy"], 0.01)
+        dyn_attr["sell"] = stepify(dyn_attr["sell"] * mult_factor["sell"], 0.01)
+    build = false
 
-func build_container(group, parent, target):
-  for g in group:
-    if group[g][0]:
-      var div = Label.new()
-      div.name = "Divisory01"
-      div.text = "---------------------------------------------------------------"
-      parent.add_child(div)
-      
-      #build group container
-      var c = GridContainer.new()
-      c.set_columns(5)
-      c.name = g
-      c.set_size(Vector2(180,0))
-      c.size_flags_horizontal = 1
-      parent.add_child(c)
-
-      var l0 = Label.new()
-      var l1 = Label.new()
-      var l2 = Label.new()
-      var l3 = Label.new()
-      var l4 = Label.new()
-      
-      # Node Name (NOT VALUES)
-      l0.name = g
-      l1.name = "Amount"
-      l2.name = "SellPrice"
-      l3.name = "BuyPrice"
-      l4.name = "BuyBtn"
-      
-      #Node Values
-      l0.text = g
-      l0.uppercase = true
-      l1.text = "amo"
-      l2.text = "sel"
-      l3.text = "buy"
-      l4.text = "+1"
-      
-      # Equally cell width
-      l0.size_flags_horizontal = 2
-      l1.size_flags_horizontal = 2
-      l2.size_flags_horizontal = 2
-      l3.size_flags_horizontal = 2
-      l4.size_flags_horizontal = 2
-      
-      c.add_child(l0)
-      c.add_child(l1)
-      c.add_child(l2)
-      c.add_child(l3)
-      c.add_child(l4)
-      
-      #name_group, dict_group, container, target
-      for el in group[g][1]:
-          if (group[g][1][el]["qtt"] >= groups[g][1][el]["min_qtt"] or el == "apple") and el != "" and c.get_node_or_null(el) == null:
-            build_subcontainer(el, g, target, c, group[g][1][el])
+func check_min_qtt(categ, item, categContainer, signalTargetFile):
+  if categsItemsDict[categ][item]["qtt"] >= categsItemsDict[categ][item]["min_qtt"]:
+    var categPosi = categsArray.find(categ, 0)
+    var itemPosi = itemsArray[categPosi].find(item, 0)
+    var nextItemPosi = itemPosi + 1
+    if nextItemPosi > itemsArray[categPosi]:
+      categPosi += 1
+      build_categ_container(categsArray[categPosi], item, categContainer, signalTargetFile)
     else:
-      break
+      build_item(categ, item, categContainer, signalTargetFile)
+    return true
+  return false
 
+func build_categ_container(categ, item, parentNode, signalTargetFile):
+  var div = Label.new()
+  div.name = "Divisory01"
+  div.text = "---------------------------------------------------------------"
+  parentNode.add_child(div)
+  
+  # Container
+  var categContainer = GridContainer.new()
+  categContainer.set_columns(5)
+  categContainer.name = categ
+  categContainer.set_size(Vector2(180,0))
+  categContainer.size_flags_horizontal = 1
+  parentNode.add_child(categContainer)
 
-func build_subcontainer(element_name, group_name, target, container, items):
-  # element_name == "apple"
-  # group_name == "fruit"
-  # target == where the touch signal must act
-  var el = element_name
-  var c = container
+  var colName = Label.new()
+  var colQtt = Label.new()
+  var colSell = Label.new()
+  var colBuy = Label.new()
+  var colBuyBtns = Label.new()
   
-  var el0 = Label.new()
-  var el1 = Label.new()
-  var el2 = Label.new()
-  var el3 = Label.new()
-  var el4 = Label.new()
+  # Node Name (NOT VALUES)
+  colName.name = categ
+  colQtt.name = "Qtt"
+  colSell.name = "SellPrice"
+  colBuy.name = "BuyPrice"
+  colBuyBtns.name = "BuyBtn"
+  
+  #Node Values
+  colName.text = categ
+  colName.uppercase = true
+  colQtt.text = "qtt"
+  colSell.text = "sel"
+  colBuy.text = "buy"
+  colBuyBtns.text = "+1"
+  
+  # Equally cell width
+  colName.size_flags_horizontal = 2
+  colQtt.size_flags_horizontal = 2
+  colSell.size_flags_horizontal = 2
+  colBuy.size_flags_horizontal = 2
+  colBuyBtns.size_flags_horizontal = 2
+  
+  categContainer.add_child(colName)
+  categContainer.add_child(colQtt)
+  categContainer.add_child(colSell)
+  categContainer.add_child(colBuy)
+  categContainer.add_child(colBuyBtns)
+  build_item(categ, item, categContainer, signalTargetFile)
 
-  el0.name = el
-  el1.name = el + "Qtt"
-  el2.name = el + "Sel"
-  el3.name = el + "Buy"
-  el4.name = el + "BuyBtn"
+func build_item(categ, item, categContainer, signalTargetFile):
+  # categ == "fruit"
+  # item == "apple"
+  var itemAttr = categsItemsDict[categ][item]
   
-  el0.text = el
-  el1.text = str(items["qtt"])
-  el2.text = str(items["sell"])
-  el3.text = str(items["buy"])
-  el4.text = "BUY"
+  var name = Label.new()
+  var qtt = Label.new()
+  var sell = Label.new()
+  var buy = Label.new()
+  var buyBtn = Label.new()
+
+  name.name = item
+  qtt.name = item + "Qtt"
+  sell.name = item + "Sel"
+  buy.name = item + "Buy"
+  buyBtn.name = item + "BuyBtn"
   
-  var ts = TouchScreenButton.new()
-  ts.name = el
+  name.text = item
+  qtt.text = str(itemAttr["qtt"])
+  sell.text = str(itemAttr["sell"])
+  buy.text = str(itemAttr["buy"])
+  buyBtn.text = "BUY"
+  
+  # Shape for the touch btn
   var rect_shape = RectangleShape2D.new()
   rect_shape.set_extents(Vector2(25, 7))
-  ts.shape = rect_shape
-  ts.set_shape_centered(true)
-  ts.connect("released", target, "_on_Btn_click", [ group_name, el, all_elements_list[group_name] ])
-  el4.add_child(ts)
+  
+  # the touch btn
+  var tsBtn = TouchScreenButton.new()
+  tsBtn.name = item
+  tsBtn.shape = rect_shape
+  tsBtn.set_shape_centered(true)
+  tsBtn.connect("released", signalTargetFile, "_on_Btn_click", [ categ, item, categsItemsDict[categ][item], categContainer ])
+  buyBtn.add_child(tsBtn)
       
-  c.add_child(el0)
-  c.add_child(el1)
-  c.add_child(el2)
-  c.add_child(el3)
-  c.add_child(el4)
+  categContainer.add_child(name)
+  categContainer.add_child(qtt)
+  categContainer.add_child(sell)
+  categContainer.add_child(buy)
+  categContainer.add_child(buyBtn)

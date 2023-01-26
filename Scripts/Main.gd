@@ -6,10 +6,11 @@ const elem = preload("res://Scripts/Elements.gd")
 
 var parent
 var buyPriceLabel
+var touchQttLabel
 
 var coins = c.new()
 var saveLoad = svLd.new()
-var elements = elem.new()
+var categAndItems = elem.new()
 var time = 0
 var timeLimit1 = 1
 var timeLimit5 = 5
@@ -19,7 +20,8 @@ var timeSave = 0
 func _ready():
   parent = get_node("MainScrollContainer/MainVBoxContainer")
   buyPriceLabel = get_node("MainScrollContainer/MainVBoxContainer/CoinUpgrade/BuyPrice")
-  elements.fill_dicts(true)
+  touchQttLabel = get_node("MainScrollContainer/MainVBoxContainer/CoinUpgrade/CoinUpgQtt")
+  categAndItems.fill_dicts(true)
   
   # Load data
   saveLoad.loadGame()
@@ -28,10 +30,11 @@ func _ready():
   
   # show coins
   parent.get_node("Coins").text = coins.show()
+  parent.get_node("CoinsSec").text = coins.show_current_per_sec()
   buyPriceLabel.text = "$" + str("%.2f" % coins.touch_coin_price)
   
   # build containers
-  elements.build_container(elements.groups, parent, self)
+  categAndItems.build_categ_container("fruit", "apple", parent, self)
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -43,6 +46,7 @@ func _process(delta):
     coins.add()
     # Show current coins
     parent.get_node("Coins").text = coins.show()
+    parent.get_node("CoinsSec").text = coins.show_current_per_sec()
     time = 0
   
   # Make things happen EACH 5 SECONDS
@@ -59,21 +63,12 @@ func _on_TouchUpgCoin_pressed():
   if coins.buy(coins.touch_coin_price):
     coins.touch_upg()
     buyPriceLabel.text = "$" + str(stepify(coins.touch_coin_price, 0.01))
+    touchQttLabel.text = str(coins.touch_coin_qtt)
     parent.get_node("Coins").text = coins.show()
 
-func _on_Btn_click(group_name, element_name, elements_list):
-  if coins.buy(elements.groups[group_name][1][element_name]["buy"]):
-    elements.groups[group_name][1][element_name]["qtt"] += 1
-    elements.groups[group_name][1][element_name]["buy"] = stepify(elements.groups[group_name][1][element_name]["buy"] * elements.multiplier_factor["sell"], 0.01)
+func _on_Btn_click(categ, item, itemAttr, container):
+  if coins.buy(itemAttr["buy"]):
+    itemAttr["qtt"] += 1
+    itemAttr["buy"] *= categAndItems.mult_factor["buy"]
+    categAndItems.check_min_qtt(categ, item, container, self)
     
-    coins.coin_add += elements.groups[group_name][1][element_name]["sell"]
-    
-    parent.get_node(group_name+"/"+element_name+"Qtt").text = str(elements.groups[group_name][1][element_name]["qtt"])
-    parent.get_node(group_name+"/"+element_name+"Buy").text = str(stepify(elements.groups[group_name][1][element_name]["buy"], 0.01))
-    
-    var element_pos = elements_list.find(element_name, 0)
-    var next_el_check = elements.groups[group_name][1][element_name]["qtt"] >= elements.groups[group_name][1][element_name]["min_qtt"]
-    var next_element = elements_list[element_pos + 1]
-    
-    if (element_pos + 1 != 11) and next_el_check and parent.get_node_or_null(group_name+"/"+next_element) == null:
-      elements.build_subcontainer(next_element, group_name, self, parent.get_node(group_name), elements.groups[group_name][1][next_element])
