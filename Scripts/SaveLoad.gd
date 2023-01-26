@@ -5,13 +5,14 @@ var passFile="hdheinfhrjebfggu3lwqdww73iendymwhcgcfwksuidgb"
 #Any number of variables of different types
 var game_data = {}
 
-func saveGame(coins):
+func saveGame(coins, categsItems):
   var file = File.new()
 
   game_data = {
-    "coins": [coins.current_value, coins.coin_add],
-    
+    "coins": coins as Dictionary,
+    "categsItems": categsItems as Dictionary,
   }
+  print(game_data["categsItems"]["fruit"]["apple"])
 
   file.open_encrypted_with_pass(path, File.WRITE, passFile)
   file.store_var(to_json(game_data), true)
@@ -27,7 +28,7 @@ func loadGame():
     var loadParam = parse_json(file.get_var(true));
     file.close()
 
-    if loadParam!=null:
+    if loadParam != null:
       game_data = loadParam;
       pass;
   pass;

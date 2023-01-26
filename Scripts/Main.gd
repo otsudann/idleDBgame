@@ -20,22 +20,25 @@ var timeSave = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+  #elementsScript.fill_dicts(true)
+  #saveLoad.saveGame(coins.coin, categsItemsDict)
   parent = get_node("MainScrollContainer/MainVBoxContainer")
-  elementsScript.fill_dicts(true)
-  
+  #print("ready 00", categsItemsDict)
   # Load data
   saveLoad.loadGame()
-  coins.current_value = float(saveLoad.game_data.coins[0])
-  coins.coin_add = float(saveLoad.game_data.coins[1])
+  coins.coin = saveLoad.game_data.coins
+  categsItemsDict = saveLoad.game_data.categsItems
   
   # show coins
   parent.get_node("Coins").text = coins.show()
-  parent.get_node("CoinsPerSec").text = coins.show_current_per_sec()
-  parent.get_node("CoinUpgrade/BuyPrice").text = "$" + str(stepify(coins.touch_coin_buy, 0.01))
+  parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
+  parent.get_node("CoinUpgrade/CoinUpgQtt").text = str(coins.coin["touchCoinQtt"])
+  parent.get_node("CoinUpgrade/BuyPrice").text = "$" + str(stepify(coins.coin["touchBuyPrice"], 0.01))
+  
+  #print("ready 01", categsItemsDict)
   
   # build containers
-  elementsScript.build_categ_container("fruit", "apple", parent, self)
-
+  elementsScript.build_categ_container("fruit", "apple", parent, self, categsItemsDict)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -46,13 +49,13 @@ func _process(delta):
     coins.add()
     # Show current coins
     parent.get_node("Coins").text = coins.show()
-    parent.get_node("CoinsPerSec").text = coins.show_current_per_sec()
+    parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
     time = 0
   
   # Make things happen EACH 5 SECONDS
   timeSave += delta
   if timeSave >= timeLimit5:
-    saveLoad.saveGame(coins)
+    saveLoad.saveGame(coins.coin, categsItemsDict)
     timeSave = 0
 
 func _on_AddCoin_pressed():
@@ -60,20 +63,21 @@ func _on_AddCoin_pressed():
   parent.get_node("Coins").text = coins.show()
 
 func _on_TouchUpgCoin_pressed():
-  if coins.buy(coins.touch_coin_buy, coins.touch_coin_sell):
+  if coins.buy(coins.coin["touchBuyPrice"], coins.coin["touchSellPrice"]):
     coins.touch_upg()
-    parent.get_node("CoinUpgrade/BuyPrice").text = "$" + str(stepify(coins.touch_coin_buy, 0.01))
-    parent.get_node("CoinUpgrade/CoinUpgQtt").text = str(coins.touch_coin_qtt)
+    parent.get_node("CoinUpgrade/BuyPrice").text = "$" + str(stepify(coins.coin["touchBuyPrice"], 0.01))
+    parent.get_node("CoinUpgrade/CoinUpgQtt").text = str(coins.coin["touchCoinQtt"])
     parent.get_node("Coins").text = coins.show()
-    parent.get_node("CoinsPerSec").text = coins.show_current_per_sec()
+    parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
 
-func _on_Btn_click(categ, item, itemAttr, container):
+func _on_Btn_click(categ, item, itemAttr, container, categsItems):
   if coins.buy(itemAttr["buy"], itemAttr["sell"]):
-    categsItemsDict[categ][item]["qtt"] += 1
-    categsItemsDict[categ][item]["buy"] = stepify(categsItemsDict[categ][item]["buy"] * elementsScript.mult_factor["buy"], 0.01)
-    parent.get_node(categ + "/" + item + "Buy").text = str(categsItemsDict[categ][item]["buy"])
-    parent.get_node(categ + "/" + item + "Qtt").text = str(categsItemsDict[categ][item]["qtt"])
+    categsItems[categ][item]["qtt"] += 1
+    categsItems[categ][item]["buy"] = stepify(categsItems[categ][item]["buy"] * elementsScript.mult_factor["buy"], 0.01)
+    parent.get_node(categ + "/" + item + "Buy").text = str(categsItems[categ][item]["buy"])
+    parent.get_node(categ + "/" + item + "Qtt").text = str(categsItems[categ][item]["qtt"])
     parent.get_node("Coins").text = str(coins.show())
-    parent.get_node("CoinsPerSec").text = coins.show_current_per_sec()
-    elementsScript.check_min_qtt(categ, item, container, self)
+    parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
+    elementsScript.check_min_qtt(categ, item, container, self, categsItems)
+    #print("btn signal")
     

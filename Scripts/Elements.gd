@@ -35,24 +35,29 @@ func fill_dicts(build=true):
         dyn_attr["sell"] = stepify(dyn_attr["sell"] * mult_factor["sell"], 0.01)
     build = false
 
-func check_min_qtt(categ, item, categContainer, signalTargetFile):
-  if categsItemsDict[categ][item]["qtt"] >= categsItemsDict[categ][item]["min_qtt"]:
+func check_min_qtt(categ, item, categContainer, signalTargetFile, categsItems):
+  if categsItems[categ][item]["qtt"] >= categsItems[categ][item]["min_qtt"]:
     var categPosi = categsArray.find(categ, 0)
+    var nextCategPosi = categPosi + 1
     var itemPosi = itemsArray[categPosi].find(item, 0)
     var nextItemPosi = itemPosi + 1
     if nextItemPosi > itemsArray[categPosi].size():
       categPosi += 1
-      build_categ_container(categsArray[categPosi], item, categContainer, signalTargetFile)
+      #print("min qtt 01", categsItems)
+      build_categ_container(categsArray[nextCategPosi], itemsArray[nextCategPosi][0], categContainer, signalTargetFile, categsItems)
     else:
-      build_item(categ, item, categContainer, signalTargetFile)
+      #print("min qtt 02", categsItems)
+      build_item(categ, itemsArray[categPosi][nextItemPosi], categContainer, signalTargetFile, categsItems)
     return true
   return false
 
-func build_categ_container(categ, item, parentNode, signalTargetFile):
+func build_categ_container(categ, item, parentNode, signalTargetFile, categsItems):
+  #print("build categs top", categsItems)
   if parentNode.get_node_or_null(categ) == null:
     var div = Label.new()
     div.name = "Divisory01"
-    div.text = "---------------------------------------------------------------"
+    div.text = "------------------------------------------------------"
+    div.set_align(1)
     parentNode.add_child(div)
     
     # Container
@@ -97,15 +102,17 @@ func build_categ_container(categ, item, parentNode, signalTargetFile):
     categContainer.add_child(colBuy)
     categContainer.add_child(colBuyBtns)
     
-    build_item(categ, item, categContainer, signalTargetFile)
+    #print("build categs items 01", categsItems)
+    build_item(categ, item, categContainer, signalTargetFile, categsItems)
   else:
-    build_item(categ, item, parentNode.get_node(categ), signalTargetFile)
+    #print("build categs items 02", categsItems)
+    build_item(categ, item, parentNode.get_node(categ), signalTargetFile, categsItems)
 
-func build_item(categ, item, categContainer, signalTargetFile):
+func build_item(categ, item, categContainer, signalTargetFile, categsItems):
   # categ == "fruit"
   # item == "apple"
+  #print("item", categsItems)
   if categContainer.get_node_or_null(item) == null:
-    var itemAttr = categsItemsDict[categ][item]
     
     var name = Label.new()
     var qtt = Label.new()
@@ -120,9 +127,9 @@ func build_item(categ, item, categContainer, signalTargetFile):
     buyBtn.name = item + "BuyBtn"
     
     name.text = item
-    qtt.text = str(itemAttr["qtt"])
-    sell.text = str(itemAttr["sell"])
-    buy.text = str(itemAttr["buy"])
+    qtt.text = str(categsItems[categ][item]["qtt"])
+    sell.text = str(categsItems[categ][item]["sell"])
+    buy.text = str(categsItems[categ][item]["buy"])
     buyBtn.text = "BUY"
     
     # Shape for the touch btn
@@ -134,7 +141,7 @@ func build_item(categ, item, categContainer, signalTargetFile):
     tsBtn.name = item
     tsBtn.shape = rect_shape
     tsBtn.set_shape_centered(true)
-    tsBtn.connect("released", signalTargetFile, "_on_Btn_click", [ categ, item, categsItemsDict[categ][item], categContainer ])
+    tsBtn.connect("released", signalTargetFile, "_on_Btn_click", [ categ, item, categsItems[categ][item], categContainer, categsItems ])
     buyBtn.add_child(tsBtn)
         
     categContainer.add_child(name)
@@ -142,3 +149,5 @@ func build_item(categ, item, categContainer, signalTargetFile):
     categContainer.add_child(sell)
     categContainer.add_child(buy)
     categContainer.add_child(buyBtn)
+  #print("build items")
+    check_min_qtt(categ, item, categContainer, signalTargetFile, categsItems)
