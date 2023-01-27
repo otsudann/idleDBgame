@@ -17,18 +17,19 @@ var time = 0
 var timeLimit1 = 1
 var timeLimit5 = 5
 var timeSave = 0
+var one_time_build = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-  #elementsScript.fill_dicts(true)
-  #saveLoad.saveGame(coins.coin, categsItemsDict)
-  parent = get_node("MainScrollContainer/MainVBoxContainer")
+  elementsScript.fill_dicts()
   #print("ready 00", categsItemsDict)
   # Load data
-  saveLoad.loadGame()
+  print(categsItemsDict)
+  saveLoad.loadGame(coins.coin, categsItemsDict)
   coins.coin = saveLoad.game_data.coins
   categsItemsDict = saveLoad.game_data.categsItems
   
+  parent = get_node("MainScrollContainer/MainVBoxContainer")
   # show coins
   parent.get_node("Coins").text = coins.show()
   parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
@@ -36,7 +37,6 @@ func _ready():
   parent.get_node("CoinUpgrade/BuyPrice").text = "$" + str(stepify(coins.coin["touchBuyPrice"], 0.01))
   
   #print("ready 01", categsItemsDict)
-  
   # build containers
   elementsScript.build_categ_container("fruit", "apple", parent, self, categsItemsDict)
 

@@ -33,6 +33,7 @@ func fill_dicts(build=true):
         dyn_attr["min_qtt"] = stepify(dyn_attr["min_qtt"] * mult_factor["qtt"], 1)
         dyn_attr["buy"] = stepify(dyn_attr["buy"] * mult_factor["buy"], 0.01)
         dyn_attr["sell"] = stepify(dyn_attr["sell"] * mult_factor["sell"], 0.01)
+        print(dyn_attr["buy"])
     build = false
 
 func check_min_qtt(categ, item, categContainer, signalTargetFile, categsItems):
