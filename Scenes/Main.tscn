@@ -28,6 +28,13 @@ __meta__ = {
 "_edit_lock_": true
 }
 
+[node name="Timer1s" type="Timer" parent="."]
+autostart = true
+
+[node name="Timer5s" type="Timer" parent="."]
+wait_time = 5.0
+autostart = true
+
 [node name="ColorRect" type="ColorRect" parent="."]
 margin_right = 360.0
 margin_bottom = 640.0
@@ -131,5 +138,7 @@ valign = 1
 [node name="TouchUpgCoin" type="TouchScreenButton" parent="MainScrollContainer/MainVBoxContainer/CoinUpgrade/UpgBtn"]
 shape = SubResource( 7 )
 
+[connection signal="timeout" from="Timer1s" to="." method="_on_Timer1s_timeout"]
+[connection signal="timeout" from="Timer5s" to="." method="_on_Timer5s_timeout"]
 [connection signal="pressed" from="MainScrollContainer/MainVBoxContainer/Coins/AddCoin" to="." method="_on_AddCoin_pressed"]
 [connection signal="pressed" from="MainScrollContainer/MainVBoxContainer/CoinUpgrade/UpgBtn/TouchUpgCoin" to="." method="_on_TouchUpgCoin_pressed"]

@@ -24,7 +24,7 @@ func _ready():
   elementsScript.fill_dicts()
   #print("ready 00", categsItemsDict)
   # Load data
-  print(categsItemsDict)
+  #print(categsItemsDict)
   saveLoad.loadGame(coins.coin, categsItemsDict)
   coins.coin = saveLoad.game_data.coins
   categsItemsDict = saveLoad.game_data.categsItems
@@ -39,24 +39,6 @@ func _ready():
   #print("ready 01", categsItemsDict)
   # build containers
   elementsScript.build_categ_container("fruit", "apple", parent, self, categsItemsDict)
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-    
-  # Make things happen EACH SECOND
-  time += delta
-  if time >= timeLimit1:
-    coins.add()
-    # Show current coins
-    parent.get_node("Coins").text = coins.show()
-    parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
-    time = 0
-  
-  # Make things happen EACH 5 SECONDS
-  timeSave += delta
-  if timeSave >= timeLimit5:
-    saveLoad.saveGame(coins.coin, categsItemsDict)
-    timeSave = 0
 
 func _on_AddCoin_pressed():
   coins.touch_add()
@@ -81,3 +63,11 @@ func _on_Btn_click(categ, item, itemAttr, container, categsItems):
     elementsScript.check_min_qtt(categ, item, container, self, categsItems)
     #print("btn signal")
     
+func _on_Timer1s_timeout() -> void:
+  coins.add()
+  # Show current coins
+  parent.get_node("Coins").text = coins.show()
+  parent.get_node("CoinsPerSec").text = coins.show_coins_per_sec()
+
+func _on_Timer5s_timeout() -> void:
+  saveLoad.saveGame(coins.coin, categsItemsDict)

@@ -1,8 +1,8 @@
 extends VBoxContainer
 
 # Quantity / Sell / Buy
-var fixed_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
-var dyn_attr = {"min_qtt": 15, "sell": 0.03, "buy": 0.25}
+var fixed_attr = {"min_qtt": 15, "sell": 0.05, "buy": 0.25}
+var dyn_attr = {"min_qtt": 15, "sell": 0.05, "buy": 0.25}
 var mult_factor = {"qtt": 1.15, "sell": 1.3, "buy": 1.4}
 
 ## Names
@@ -18,12 +18,6 @@ var categsItemsDict = {
   "veggi": veggiDict,
  }
 
-func _ready():
-  pass
-
-func load_saved_items():
-  pass
-
 #this is a one time function to setup base sell/buy values 
 func fill_dicts(build=true):
   if build:
@@ -33,7 +27,7 @@ func fill_dicts(build=true):
         dyn_attr["min_qtt"] = stepify(dyn_attr["min_qtt"] * mult_factor["qtt"], 1)
         dyn_attr["buy"] = stepify(dyn_attr["buy"] * mult_factor["buy"], 0.01)
         dyn_attr["sell"] = stepify(dyn_attr["sell"] * mult_factor["sell"], 0.01)
-        print(dyn_attr["buy"])
+        #print(dyn_attr["buy"])
     build = false
 
 func check_min_qtt(categ, item, categContainer, signalTargetFile, categsItems):
